@@ -1,0 +1,42 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      service: postgres
+  template:
+    metadata:
+      labels:
+        service: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:10.1
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: db0
+            - name: POSTGRES_USER
+              value: dren
+            - name: POSTGRES_PASSWORD
+              value: dren
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres # Sets service name
+  labels:
+    service: postgres # Labels and Selectors
+spec:
+  type: ClusterIP # Sets service type
+  ports:
+    - port: 5432 # Sets port to run the postgres application
+  selector:
+    app: postgres
+

@@ -1,0 +1,12 @@
+---
+- name: Install Haproxy
+  hosts: localhost
+  become: yes
+  tasks:
+    - name: Install Haproxy and all required packages
+      shell: sudo apt install haproxy |
+        sudo apt install --no-install-recommends software-properties-common |
+        sudo add-apt-repository ppa:vbernat/haproxy-2.4 -y |
+        sudo apt install haproxy=2.4.\* |
+        sudo apt-get update |
+        systemctl enable haproxy.service

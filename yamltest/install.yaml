@@ -1,0 +1,20 @@
+---
+- name: Save file paths to a dictionary
+  hosts: localhost
+  tasks:
+    - name: Find all files in the directory
+      find:
+        paths: /life/yamltest/Kubernetes/
+        file_type: file
+        patterns:
+          - "*.yaml"
+      register: files
+
+    - name: Create a dictionary of file paths
+      set_fact:
+        file_paths: "{{ file_paths|default({})|combine({item.path: item.path}) }}"
+      loop: "{{ files.files }}"
+
+    - name: Execute all yaml files
+      shell: "kubectl create -f {{ item.value }}"
+      loop: "{{ file_paths|dict2items }}"

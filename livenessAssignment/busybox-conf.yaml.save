@@ -1,0 +1,1 @@
+Create a configmap with some data, create a `busybox` pod, mount the configmap as a file, `cat` the  file mounted
