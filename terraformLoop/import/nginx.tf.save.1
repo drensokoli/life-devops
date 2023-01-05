@@ -1,0 +1,9 @@
+resource "docker_image" "nginx" {
+  name         = "nginx:latest"
+  keep_locally = false
+}
+
+resource "docker_container" "nginx" {
+  image = "8162f307a1792a61880ea3452776a5fae4e0cd308e9a6e97df58f5bdbe4eb45e
+  name  = "some-nginx"
+}
