@@ -1,9 +1,0 @@
----
-- name: Patriotizem
-  hosts:
-    - life
-  tasks:
-  - name: Shkruaj poezine
-    ansible.builtin.copy:
-      src: "/life/treniQufQuf/index.html"
-      dest: "/var/www/html/index.html"
