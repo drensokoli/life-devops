@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      initContainers:
+      - name: init-hostname
+        image: nginx:alpine
+        command: ["sh", "-c", "echo Hello from $(hostname) > /hostname/hostname.html"]
+        volumeMounts:
+        - name: nginx-vol
+          mountPath: /hostname
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-vol
+          mountPath: /usr/share/nginx/html/
+      volumes:
+      - name: nginx-vol
+        emptyDir: {}apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      initContainers:
+      - name: init-hostname
+        image: nginx:alpine
+        command: ['sh', '-c', 'echo "Hello from $(hostname)" > /hostname/hostname.html']
+        volumeMounts:
+        - name: nginx-vol
+          mountPath: /hostname
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nginx-vol
+          mountPath: /usr/share/nginx/html/
+      volumes:
+      - name: nginx-vol
+        emptyDir: {}

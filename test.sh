@@ -1,6 +1,3 @@
-read -p "Are you sure? " -n 1 -r
-echo    # (optional) move to a new line
-if [[ ! $REPLY =~ ^[Yy]$ ]]
-then
-    echo "y"
-fi
+#!/bin/bash
+branch=$(git rev-parse --abbrev-ref HEAD)
+echo $branch > branch_name.txt

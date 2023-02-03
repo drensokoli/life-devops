@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: date
+data:
+  date.sh: |
+    #!/bin/bash
+
+    while true
+    do
+        date +%T >> /usr/share/nginx/html/index.html
+        sleep 1
+    done	
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-date
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        volumeMounts:
+          - name: nginx-vol
+            mountPath: /usr/share/nginx/html
+      - name: busybox
+        image: busybox
+        command: ["/bin/sh", "bash /date/date.sh"]
+        volumeMounts:
+          - name: nginx-vol
+            mountPath: /usr/share/nginx/html
+          - name: date
+            mountPath: /date
+        lifecycle:
+          preStop:
+            exec:
+              command: ["/bin/sh", "-c", "sleep 20m"]
+      volumes:
+      - name: nginx-vol
+        emptyDir: {}
+      - name: date
+        configMap:
+          name: date

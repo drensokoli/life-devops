@@ -1,0 +1,106 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-v1
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-echo
+  template:
+    metadata:
+      labels:
+        app: app-echo
+    spec:
+      containers:
+      - name: app-v1
+        image: hashicorp/http-echo
+        args: 
+         - "-text=app-v1"
+        ports:
+        - containerPort: 80
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-v2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-echo
+  template:
+    metadata:
+      labels:
+        app: app-echo
+    spec:
+      containers:
+      - name: app-v2
+        image: hashicorp/http-echo
+        args:
+         - "-text=app-v2"
+        ports:
+        - containerPort: 80
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: app-svc
+spec:
+  selector:
+    app: app-echo
+  ports:
+    - port: 5678
+---
+apiVersion: networking.k8s.io/v1
+
+kind: Ingress
+
+metadata:
+
+  name: minimal-ingress
+
+  annotations:
+
+    nginx.ingress.kubernetes.io/rewrite-target: /
+
+spec:
+
+  ingressClassName: nginx-example
+
+  rules:
+
+  - http:
+
+      paths:
+
+      - path: /testpath
+
+        pathType: Prefix
+
+        backend:
+
+          service:
+
+            name: test
+
+            port:
+
+              number: 80
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nginx-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /app
+        pathType: Prefix
+        backend:
+          service:
+            name: app-svc
+            port:
+              number: 5678
